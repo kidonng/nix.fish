@@ -1,6 +1,6 @@
 # ❄️🐟 Nix.fish
 
-Fish port of [`~/.nix-profile/etc/profile.d/nix.sh`](https://github.com/NixOS/nix/blob/master/scripts/nix-profile.sh.in) which sets up [Nix](https://nixos.org/) environment.
+[Fish](https://fishshell.com/) port of [`~/.nix-profile/etc/profile.d/nix.sh`](https://github.com/NixOS/nix/blob/master/scripts/nix-profile.sh.in) which sets up [Nix](https://nixos.org/) environment.
 
 ## Installation
 
