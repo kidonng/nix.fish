@@ -22,14 +22,32 @@ end
 test -n "$MANPATH" && set -p MANPATH $profile/share/man
 
 set -l bin $profile/bin
-contains $bin $PATH || set -p PATH $bin
+set -l index (contains -i $bin $PATH) && set -e PATH[$index]
 
-set -l store (string replace -rf '/bin$' "" (string match "/nix/store/*" $PATH))
-if test (count $store) != 0
+for path in $PATH
+    if contains $path $fish_user_paths || string match -q "/nix/store/*" $path
+        continue
+    end
+
+    set -l index (contains -i $path $PATH)
+    set PATH $PATH[..(math $index - 1)] $bin $PATH[$index..]
+    break
+end
+
+set -l packages (string replace -rf '/bin$' "" (string match "/nix/store/*" $PATH))
+if test (count $packages) != 0
     set fish_complete_path $fish_complete_path[1] \
-        $store/share/fish/vendor_completions.d \
+        $packages/etc/fish/completions \
+        $packages/share/fish/vendor_completions.d \
         $fish_complete_path[2..]
     set fish_function_path $fish_function_path[1] \
-        $store/share/fish/vendor_functions.d \
+        $packages/etc/fish/functions \
+        $packages/share/fish/vendor_functions.d \
         $fish_function_path[2..]
+
+    for file in $packages/etc/fish/conf.d/*.fish $packages/share/fish/vendor_conf.d/*.fish
+        if ! test -f (string replace -r "^.*/" $__fish_config_dir/conf.d/ -- $file)
+            source $file
+        end
+    end
 end
