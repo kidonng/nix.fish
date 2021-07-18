@@ -4,7 +4,9 @@ set -l channels ~/.nix-defexpr/channels
 contains $channels $NIX_PATH || set -agx NIX_PATH $channels
 
 function _nix_install -e nix_install -V profile
-    set -Ux NIX_PROFILES /nix/var/nix/profiles/default $profile
+    set -Ux NIX_PROFILES $profile
+    set -l default /nix/var/nix/profiles/default
+    test -d $default && set -p NIX_PROFILES $default
 
     for file in /etc/{ssl/{certs/ca-certificates.crt,ca-bundle.pem,certs/ca-bundle.crt},pki/tls/certs/ca-bundle.crt} $profile/etc/{ssl/certs/,}ca-bundle.crt
         if test -e $file
