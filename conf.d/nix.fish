@@ -5,8 +5,11 @@ contains $channels $NIX_PATH || set -agx NIX_PATH $channels
 
 function _nix_install -e nix_install -V profile
     set -Ux NIX_PROFILES $profile
+
     set -l default /nix/var/nix/profiles/default
-    test -d $default && set -p NIX_PROFILES $default
+    if test -d $default && ! contains $default $NIX_PROFILES
+        set -p NIX_PROFILES $default
+    end
 
     for file in /etc/{ssl/{certs/ca-certificates.crt,ca-bundle.pem,certs/ca-bundle.crt},pki/tls/certs/ca-bundle.crt} $profile/etc/{ssl/certs/,}ca-bundle.crt
         if test -e $file
@@ -32,7 +35,14 @@ for path in $PATH
     end
 
     set -l index (contains -i $path $PATH)
-    set PATH $PATH[..(math $index - 1)] $bin $PATH[$index..]
+
+    # https://github.com/fish-shell/fish-shell/issues/8213
+    if test $index = 1
+        set -p PATH $bin
+    else
+        set PATH $PATH[..(math $index - 1)] $bin $PATH[$index..]
+    end
+
     break
 end
 
