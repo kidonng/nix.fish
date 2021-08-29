@@ -26,27 +26,9 @@ end
 
 test -n "$MANPATH" && set -p MANPATH $profile/share/man
 
-set -l bin $profile/bin
-set -l index (contains -i $bin $PATH) && set -e PATH[$index]
+set -l packages (string match -r "/nix/store/[\w.-]+" $PATH)
+fish_add_path -ag $packages/bin $profile/bin
 
-for path in $PATH
-    if contains $path $fish_user_paths || string match -q "/nix/store/*" $path
-        continue
-    end
-
-    set -l index (contains -i $path $PATH)
-
-    # https://github.com/fish-shell/fish-shell/issues/8213
-    if test $index = 1
-        set -p PATH $bin
-    else
-        set PATH $PATH[..(math $index - 1)] $bin $PATH[$index..]
-    end
-
-    break
-end
-
-set -l packages (string replace -rf '/bin$' "" (string match "/nix/store/*" $PATH))
 if test (count $packages) != 0
     set fish_complete_path $fish_complete_path[1] \
         $packages/etc/fish/completions \
