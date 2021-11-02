@@ -11,7 +11,8 @@ function _nix_install -e nix_install -V profile
         set -p NIX_PROFILES $default
     end
 
-    for file in /etc/{ssl/{certs/ca-certificates.crt,ca-bundle.pem,certs/ca-bundle.crt},pki/tls/certs/ca-bundle.crt} $profile/etc/{ssl/certs/,}ca-bundle.crt
+    # Also check for /etc/ssl/cert.pem, see https://github.com/NixOS/nix/issues/5461
+    for file in /etc/{ssl/{certs/ca-certificates.crt,ca-bundle.pem,certs/ca-bundle.crt},pki/tls/certs/ca-bundle.crt,ssl/cert.pem} $profile/etc/{ssl/certs/,}ca-bundle.crt
         if test -e $file
             set -Ux NIX_SSL_CERT_FILE $file
             break
