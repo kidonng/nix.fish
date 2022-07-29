@@ -29,12 +29,6 @@
 
   Nix.fish is pure fish, while nix-env.fish starts Bash to capture environment variables and hence slower.
 
-- Supports [single-user mode](https://nixos.org/manual/nix/stable/installation/single-user.html) only
-
-  Single-user mode is the most prominent Nix installation method and the profile script is easier to port and use.
-
-  For multi-user mode support, consider using nix-env.fish instead.
-
 - Doesn't replicate [`__fish_build_paths.fish`](https://github.com/NixOS/nixpkgs/blob/09c38c29f2c719cd76ca17a596c2fdac9e186ceb/pkgs/shells/fish/default.nix#L76-L117)
 
   `__fish_build_paths.fish` handles vendored fish scripts from Nixpkgs. It's error-prone to replicate its logic when it is present.

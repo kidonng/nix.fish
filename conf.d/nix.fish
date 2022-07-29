@@ -1,4 +1,5 @@
 set -l profile ~/.nix-profile
+set -l default /nix/var/nix/profiles/default
 
 set -l channels ~/.nix-defexpr/channels
 contains $channels $NIX_PATH || set -agx NIX_PATH $channels
@@ -6,7 +7,6 @@ contains $channels $NIX_PATH || set -agx NIX_PATH $channels
 function _nix_install -e nix_install -V profile
     set -Ux NIX_PROFILES $profile
 
-    set -l default /nix/var/nix/profiles/default
     if test -d $default && ! contains $default $NIX_PROFILES
         set -p NIX_PROFILES $default
     end
@@ -28,7 +28,7 @@ end
 test -n "$MANPATH" && set -p MANPATH $profile/share/man
 
 set -l packages (string match -r "/nix/store/[\w.-]+" $PATH)
-fish_add_path -ag $packages/bin $profile/bin
+fish_add_path -ag $packages/bin $profile/bin $default/bin
 
 if test (count $packages) != 0
     set fish_complete_path $fish_complete_path[1] \
