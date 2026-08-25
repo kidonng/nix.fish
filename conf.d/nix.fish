@@ -1,8 +1,6 @@
 set --local profile ~/.nix-profile
 set --local default /nix/var/nix/profiles/default
-
 set --local channels ~/.nix-defexpr/channels
-contains $channels $NIX_PATH || set --global --export --append NIX_PATH $channels
 
 function _nix_install --on-event nix_install --inherit-variable profile
     set --universal --export NIX_PROFILES $profile
@@ -29,6 +27,10 @@ test -n "$MANPATH" && set --prepend MANPATH $profile/share/man
 
 set --local packages (string match --regex "/nix/store/[\w.-]+" $PATH)
 fish_add_path --global --append $packages/bin $profile/bin $default/bin
+
+if test -e $channels; and not contains $channels $NIX_PATH
+    set --global --export --append NIX_PATH $channels
+end
 
 if test (count $packages) != 0
     set fish_complete_path $fish_complete_path[1] \
